@@ -378,7 +378,7 @@ def _test_matmul(namespace, x1, x2):
         stack_shape = sh.broadcast_shapes(x1.shape[:-2], x2.shape[:-2])
         ph.assert_result_shape("matmul", in_shapes=[x1.shape, x2.shape],
                                out_shape=res.shape,
-                               expected=stack_shape + (x1.shape[-2], x2.shape[-1]))
+                               expected=stack_shape + list((x1.shape[-2], x2.shape[-1])))
         _test_stacks(matmul, x1, x2, res=res)
 
 @pytest.mark.unvectorized
@@ -411,7 +411,7 @@ def test_matrix_norm(x, kw):
     # ord = kw.get('ord', 'fro')
 
     if keepdims:
-        expected_shape = x.shape[:-2] + (1, 1)
+        expected_shape = x.shape[:-2] + list((1, 1))
     else:
         expected_shape = x.shape[:-2]
     ph.assert_complex_to_float_dtype("matrix_norm", in_dtype=x.dtype,
@@ -540,18 +540,18 @@ def test_qr(x, kw):
     ph.assert_dtype("qr", in_dtype=x.dtype, out_dtype=Q.dtype,
                     expected=x.dtype, repr_name="Q.dtype")
     if mode == 'complete':
-        expected_Q_shape = x.shape[:-2] + (M, M)
+        expected_Q_shape = x.shape[:-2] + list((M, M))
     else:
-        expected_Q_shape = x.shape[:-2] + (M, K)
+        expected_Q_shape = x.shape[:-2] + list((M, K))
     ph.assert_result_shape("qr", in_shapes=[x.shape], out_shape=Q.shape,
                            expected=expected_Q_shape, repr_name="Q.shape")
 
     ph.assert_dtype("qr", in_dtype=x.dtype, out_dtype=R.dtype,
                     expected=x.dtype, repr_name="R.dtype")
     if mode == 'complete':
-        expected_R_shape = x.shape[:-2] + (M, N)
+        expected_R_shape = x.shape[:-2] + list((M, N))
     else:
-        expected_R_shape = x.shape[:-2] + (K, N)
+        expected_R_shape = x.shape[:-2] + list((K, N))
     ph.assert_result_shape("qr", in_shapes=[x.shape], out_shape=R.shape,
                            expected=expected_R_shape, repr_name="R.shape")
 
@@ -630,7 +630,7 @@ def solve_args() -> Tuple[SearchStrategy[Array], SearchStrategy[Array]]:
     def _x2_shapes(draw):
         base_shape = draw(stack_shapes)[1] + draw(x1).shape[-1:]
         end = draw(integers(0, SQRT_MAX_ARRAY_SIZE // max(math.prod(base_shape), 1)))
-        return base_shape + (end,)
+        return base_shape + list((end,))
 
     x2_shapes = one_of(x1.map(lambda x: (x.shape[-1],)), _x2_shapes())
     x2 = arrays(shape=x2_shapes, dtype=mutual_dtypes.map(lambda pair: pair[1]))

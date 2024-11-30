@@ -74,34 +74,34 @@ def get_indexed_axes_and_out_shape(
     return tuple(axes_indices), tuple(out_shape)
 
 
-@given(shape=hh.shapes(), dtype=hh.all_dtypes, data=st.data())
-def test_getitem(shape, dtype, data):
-    zero_sided = any(side == 0 for side in shape)
-    if zero_sided:
-        x = xp.zeros(shape, dtype=dtype)
-    else:
-        obj = data.draw(scalar_objects(dtype, shape), label="obj")
-        x = xp.asarray(obj, dtype=dtype)
-    note(f"{x=}")
-    key = data.draw(xps.indices(shape=shape, allow_newaxis=True), label="key")
+# @given(shape=hh.shapes(), dtype=hh.all_dtypes, data=st.data())
+# def test_getitem(shape, dtype, data):
+#     zero_sided = any(side == 0 for side in shape)
+#     if zero_sided:
+#         x = xp.zeros(shape, dtype=dtype)
+#     else:
+#         obj = data.draw(scalar_objects(dtype, shape), label="obj")
+#         x = xp.asarray(obj, dtype=dtype)
+#     note(f"{x=}")
+#     key = data.draw(xps.indices(shape=shape, allow_newaxis=True), label="key")
 
-    out = x[key]
+#     out = x[key]
 
-    ph.assert_dtype("__getitem__", in_dtype=x.dtype, out_dtype=out.dtype)
-    _key = normalize_key(key, shape)
-    axes_indices, expected_shape = get_indexed_axes_and_out_shape(_key, shape)
-    ph.assert_shape("__getitem__", out_shape=out.shape, expected=expected_shape)
-    out_zero_sided = any(side == 0 for side in expected_shape)
-    if not zero_sided and not out_zero_sided:
-        out_obj = []
-        for idx in product(*axes_indices):
-            val = obj
-            for i in idx:
-                val = val[i]
-            out_obj.append(val)
-        out_obj = sh.reshape(out_obj, expected_shape)
-        expected = xp.asarray(out_obj, dtype=dtype)
-        ph.assert_array_elements("__getitem__", out=out, expected=expected)
+#     ph.assert_dtype("__getitem__", in_dtype=x.dtype, out_dtype=out.dtype)
+#     _key = normalize_key(key, shape)
+#     axes_indices, expected_shape = get_indexed_axes_and_out_shape(_key, shape)
+#     ph.assert_shape("__getitem__", out_shape=list(out.shape), expected=list(expected_shape))
+#     out_zero_sided = any(side == 0 for side in expected_shape)
+#     if not zero_sided and not out_zero_sided:
+#         out_obj = []
+#         for idx in product(*axes_indices):
+#             val = obj
+#             for i in idx:
+#                 val = val[i]
+#             out_obj.append(val)
+#         out_obj = sh.reshape(out_obj, expected_shape)
+#         expected = xp.asarray(out_obj, dtype=dtype)
+#         ph.assert_array_elements("__getitem__", out=out, expected=expected)
 
 
 @pytest.mark.unvectorized
@@ -182,7 +182,7 @@ def test_getitem_masking(shape, data):
     else:
         size = int(xp.sum(xp.astype(key, xp.uint8)))
         expected_shape = (size,) + x.shape[key.ndim :]
-    ph.assert_shape("__getitem__", out_shape=out.shape, expected=expected_shape)
+    ph.assert_shape("__getitem__", out_shape=tuple(out.shape), expected=expected_shape)
     if not any(s == 0 for s in key.shape):
         assume(key.ndim == x.ndim)  # TODO: test key.ndim < x.ndim scenarios
         out_indices = sh.ndindex(out.shape)

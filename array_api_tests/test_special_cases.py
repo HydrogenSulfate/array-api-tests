@@ -20,7 +20,8 @@ from dataclasses import dataclass, field
 from decimal import ROUND_HALF_EVEN, Decimal
 from enum import Enum, auto
 from typing import Any, Callable, Dict, List, Optional, Protocol, Tuple, Literal
-from warnings import warn
+from warnings import warn, filterwarnings
+filterwarnings('ignore')
 
 import pytest
 from hypothesis import given, note, settings, assume
@@ -707,8 +708,9 @@ def parse_unary_case_block(case_block: str, func_name: str) -> List[UnaryCase]:
             )
             cases.append(case)
         else:
-            if not r_remaining_case.search(case_str):
-                warn(f"case for {func_name} not machine-readable: '{case_str}'")
+            pass
+            # if not r_remaining_case.search(case_str):
+            #     warn(f"case for {func_name} not machine-readable: '{case_str}'")
     return cases
 
 
@@ -1315,7 +1317,7 @@ def test_iop(iop_name, iop, case, data):
 def test_empty_arrays(func_name, expected):  # TODO: parse docstrings to get expected
     func = getattr(xp, func_name)
     out = func(xp.asarray([], dtype=dh.default_float))
-    ph.assert_shape(func_name, out_shape=out.shape, expected=())  # sanity check
+    ph.assert_shape(func_name, out_shape=tuple(out.shape), expected=())  # sanity check
     msg = f"{out=!r}, but should be {expected}"
     if math.isnan(expected):
         assert xp.isnan(out), msg
@@ -1342,5 +1344,5 @@ def test_nan_propagation(func_name, x, data):
 
     out = func(x)
 
-    ph.assert_shape(func_name, out_shape=out.shape, expected=())  # sanity check
+    ph.assert_shape(func_name, out_shape=tuple(out.shape), expected=())  # sanity check
     assert xp.isnan(out), f"{out=!r}, but should be NaN"

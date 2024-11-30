@@ -57,7 +57,7 @@ def test_astype(x_dtype, dtype, kw, data):
     out = xp.astype(x, dtype, **kw)
 
     ph.assert_kw_dtype("astype", kw_dtype=dtype, out_dtype=out.dtype)
-    ph.assert_shape("astype", out_shape=out.shape, expected=x.shape, kw=kw)
+    ph.assert_shape("astype", out_shape=tuple(out.shape), expected=x.shape, kw=kw)
     # TODO: test values
     # TODO: test copy
 
@@ -103,7 +103,7 @@ def test_broadcast_to(x, data):
     out = xp.broadcast_to(x, shape)
 
     ph.assert_dtype("broadcast_to", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("broadcast_to", out_shape=out.shape, expected=shape)
+    ph.assert_shape("broadcast_to", out_shape=tuple(out.shape), expected=shape)
     # TODO: test values
 
 

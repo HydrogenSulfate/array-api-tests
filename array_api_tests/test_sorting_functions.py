@@ -54,7 +54,7 @@ def test_argsort(x, data):
     out = xp.argsort(x, **kw)
 
     ph.assert_default_index("argsort", out.dtype)
-    ph.assert_shape("argsort", out_shape=out.shape, expected=x.shape, kw=kw)
+    ph.assert_shape("argsort", out_shape=list(out.shape), expected=x.shape, kw=kw)
     axis = kw.get("axis", -1)
     axes = sh.normalize_axis(axis, x.ndim)
     scalar_type = dh.get_scalar_type(x.dtype)
@@ -115,7 +115,7 @@ def test_sort(x, data):
     out = xp.sort(x, **kw)
 
     ph.assert_dtype("sort", out_dtype=out.dtype, in_dtype=x.dtype)
-    ph.assert_shape("sort", out_shape=out.shape, expected=x.shape, kw=kw)
+    ph.assert_shape("sort", out_shape=list(out.shape), expected=x.shape, kw=kw)
     axis = kw.get("axis", -1)
     axes = sh.normalize_axis(axis, x.ndim)
     scalar_type = dh.get_scalar_type(x.dtype)

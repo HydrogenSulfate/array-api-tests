@@ -38,7 +38,7 @@ def test_argmax(x, data):
     ph.assert_default_index("argmax", out.dtype)
     axes = sh.normalize_axis(kw.get("axis", None), x.ndim)
     ph.assert_keepdimable_shape(
-        "argmax", in_shape=x.shape, out_shape=out.shape, axes=axes, keepdims=keepdims, kw=kw
+        "argmax", in_shape=x.shape, out_shape=tuple(out.shape), axes=axes, keepdims=keepdims, kw=kw
     )
     scalar_type = dh.get_scalar_type(x.dtype)
     for indices, out_idx in zip(sh.axes_ndindex(x.shape, axes), sh.ndindex(out.shape)):
@@ -75,7 +75,7 @@ def test_argmin(x, data):
     ph.assert_default_index("argmin", out.dtype)
     axes = sh.normalize_axis(kw.get("axis", None), x.ndim)
     ph.assert_keepdimable_shape(
-        "argmin", in_shape=x.shape, out_shape=out.shape, axes=axes, keepdims=keepdims, kw=kw
+        "argmin", in_shape=x.shape, out_shape=tuple(out.shape), axes=axes, keepdims=keepdims, kw=kw
     )
     scalar_type = dh.get_scalar_type(x.dtype)
     for indices, out_idx in zip(sh.axes_ndindex(x.shape, axes), sh.ndindex(out.shape)):
@@ -145,7 +145,7 @@ def test_where(shapes, dtypes, data):
     out = xp.where(cond, x1, x2)
 
     shape = sh.broadcast_shapes(*shapes)
-    ph.assert_shape("where", out_shape=out.shape, expected=shape)
+    ph.assert_shape("where", out_shape=tuple(out.shape), expected=shape)
     # TODO: generate indices without broadcasting arrays
     _cond = xp.broadcast_to(cond, shape)
     _x1 = xp.broadcast_to(x1, shape)

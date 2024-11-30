@@ -82,8 +82,8 @@ def assert_n_axis_shape(
         axis_side = x.shape[_axis]
     else:
         axis_side = n
-    expected = x.shape[:_axis] + (axis_side,) + x.shape[_axis + 1 :]
-    ph.assert_shape(func_name, out_shape=out.shape, expected=expected)
+    expected = x.shape[:_axis] + list((axis_side,)) + x.shape[_axis + 1 :]
+    ph.assert_shape(func_name, out_shape=list(out.shape), expected=expected)
 
 
 def assert_s_axes_shape(
@@ -103,7 +103,7 @@ def assert_s_axes_shape(
         else:
             side = x.shape[i]
         expected.append(side)
-    ph.assert_shape(func_name, out_shape=out.shape, expected=tuple(expected))
+    ph.assert_shape(func_name, out_shape=list(out.shape), expected=tuple(expected))
 
 
 @given(x=hh.arrays(dtype=hh.complex_dtypes, shape=fft_shapes_strat), data=st.data())
@@ -159,8 +159,8 @@ def test_rfft(x, data):
         axis_side = x.shape[_axis] // 2 + 1
     else:
         axis_side = n // 2 + 1
-    expected_shape = x.shape[:_axis] + (axis_side,) + x.shape[_axis + 1 :]
-    ph.assert_shape("rfft", out_shape=out.shape, expected=expected_shape)
+    expected_shape = x.shape[:_axis] + list((axis_side,)) + x.shape[_axis + 1 :]
+    ph.assert_shape("rfft", out_shape=list(out.shape), expected=expected_shape)
 
 
 @given(x=hh.arrays(dtype=hh.complex_dtypes, shape=fft_shapes_strat), data=st.data())
@@ -181,8 +181,8 @@ def test_irfft(x, data):
         axis_side = 2 * (x.shape[_axis] - 1)
     else:
         axis_side = n
-    expected_shape = x.shape[:_axis] + (axis_side,) + x.shape[_axis + 1 :]
-    ph.assert_shape("irfft", out_shape=out.shape, expected=expected_shape)
+    expected_shape = x.shape[:_axis] + list((axis_side,)) + x.shape[_axis + 1 :]
+    ph.assert_shape("irfft", out_shape=list(out.shape), expected=expected_shape)
 
 
 @given(x=hh.arrays(dtype=hh.real_floating_dtypes, shape=fft_shapes_strat), data=st.data())
@@ -203,7 +203,7 @@ def test_rfftn(x, data):
             side = x.shape[i]
         expected.append(side)
     expected[_axes[-1]] = _s[-1] // 2 + 1
-    ph.assert_shape("rfftn", out_shape=out.shape, expected=tuple(expected))
+    ph.assert_shape("rfftn", out_shape=list(out.shape), expected=tuple(expected))
 
 
 @given(
@@ -236,7 +236,7 @@ def test_irfftn(x, data):
     #     expected.append(side)
     # last_axis = max(_axes)
     # expected[last_axis] = _s[_axes.index(last_axis)] // 2 + 1
-    # ph.assert_shape("irfftn", out_shape=out.shape, expected=tuple(expected))
+    # ph.assert_shape("irfftn", out_shape=list(out.shape), expected=tuple(expected))
 
 
 @given(x=hh.arrays(dtype=hh.complex_dtypes, shape=fft_shapes_strat), data=st.data())
@@ -257,8 +257,8 @@ def test_hfft(x, data):
         axis_side = 2 * (x.shape[_axis] - 1)
     else:
         axis_side = n
-    expected_shape = x.shape[:_axis] + (axis_side,) + x.shape[_axis + 1 :]
-    ph.assert_shape("hfft", out_shape=out.shape, expected=expected_shape)
+    expected_shape = x.shape[:_axis] + list((axis_side,)) + x.shape[_axis + 1 :]
+    ph.assert_shape("hfft", out_shape=list(out.shape), expected=expected_shape)
 
 
 @given(x=hh.arrays(dtype=hh.real_floating_dtypes, shape=fft_shapes_strat), data=st.data())
@@ -274,21 +274,21 @@ def test_ihfft(x, data):
         axis_side = x.shape[_axis] // 2 + 1
     else:
         axis_side = n // 2 + 1
-    expected_shape = x.shape[:_axis] + (axis_side,) + x.shape[_axis + 1 :]
-    ph.assert_shape("ihfft", out_shape=out.shape, expected=expected_shape)
+    expected_shape = x.shape[:_axis] + list((axis_side,)) + x.shape[_axis + 1 :]
+    ph.assert_shape("ihfft", out_shape=list(out.shape), expected=expected_shape)
 
 
 @given(n=st.integers(1, 100), kw=hh.kwargs(d=st.floats(0.1, 5)))
 def test_fftfreq(n, kw):
     out = xp.fft.fftfreq(n, **kw)
-    ph.assert_shape("fftfreq", out_shape=out.shape, expected=(n,), kw={"n": n})
+    ph.assert_shape("fftfreq", out_shape=list(out.shape), expected=(n,), kw={"n": n})
 
 
 @given(n=st.integers(1, 100), kw=hh.kwargs(d=st.floats(0.1, 5)))
 def test_rfftfreq(n, kw):
     out = xp.fft.rfftfreq(n, **kw)
     ph.assert_shape(
-        "rfftfreq", out_shape=out.shape, expected=(n // 2 + 1,), kw={"n": n}
+        "rfftfreq", out_shape=list(out.shape), expected=(n // 2 + 1,), kw={"n": n}
     )
 
 
@@ -303,4 +303,4 @@ def test_shift_func(func_name, x, data):
     )
     out = func(x, axes=axes)
     ph.assert_dtype(func_name, in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape(func_name, out_shape=out.shape, expected=x.shape)
+    ph.assert_shape(func_name, out_shape=list(out.shape), expected=x.shape)

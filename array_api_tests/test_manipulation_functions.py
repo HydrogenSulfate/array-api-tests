@@ -67,7 +67,7 @@ def test_concat(dtypes, base_shape, data):
     else:
         _axis = axis if axis >= 0 else len(base_shape) + axis
         shape_strat = st.integers(0, MAX_SIDE).map(
-            lambda i: base_shape[:_axis] + (i,) + base_shape[_axis + 1 :]
+            lambda i: base_shape[:_axis] + list((i,)) + base_shape[_axis + 1 :]
         )
     arrays = []
     for i, dtype in enumerate(dtypes, 1):
@@ -87,7 +87,7 @@ def test_concat(dtypes, base_shape, data):
         for other_shape in shapes[1:]:
             shape[_axis] += other_shape[_axis]
         shape = tuple(shape)
-    ph.assert_result_shape("concat", in_shapes=shapes, out_shape=out.shape, expected=shape, kw=kw)
+    ph.assert_result_shape("concat", in_shapes=shapes, out_shape=tuple(out.shape), expected=shape, kw=kw)
 
     if _axis is None:
         out_indices = (i for i in range(math.prod(out.shape)))
@@ -142,7 +142,7 @@ def test_expand_dims(x, axis):
     index = axis if axis >= 0 else x.ndim + axis + 1
     shape.insert(index, 1)
     shape = tuple(shape)
-    ph.assert_result_shape("expand_dims", in_shapes=[x.shape], out_shape=out.shape, expected=shape)
+    ph.assert_result_shape("expand_dims", in_shapes=[x.shape], out_shape=tuple(out.shape), expected=shape)
 
     assert_array_ndindex(
         "expand_dims", x, x_indices=sh.ndindex(x.shape), out=out, out_indices=sh.ndindex(out.shape)
@@ -185,7 +185,7 @@ def test_moveaxis(x, data):
     expected_shape = tuple(x.shape[i] for i in new_axes)
 
     ph.assert_result_shape("moveaxis", in_shapes=[x.shape],
-                           out_shape=out.shape, expected=expected_shape,
+                           out_shape=tuple(out.shape), expected=expected_shape,
                            kw={"source": source, "destination": destination})
 
     indices = list(sh.ndindex(x.shape))
@@ -227,7 +227,7 @@ def test_squeeze(x, data):
         if i not in axes:
             shape.append(side)
     shape = tuple(shape)
-    ph.assert_result_shape("squeeze", in_shapes=[x.shape], out_shape=out.shape, expected=shape, kw=dict(axis=axis))
+    ph.assert_result_shape("squeeze", in_shapes=[x.shape], out_shape=tuple(out.shape), expected=shape, kw=dict(axis=axis))
 
     assert_array_ndindex("squeeze", x, x_indices=sh.ndindex(x.shape), out=out, out_indices=sh.ndindex(out.shape))
 
@@ -279,7 +279,7 @@ def test_permute_dims(x, axes):
         side = x.shape[dim]
         shape[i] = side
     shape = tuple(shape)
-    ph.assert_result_shape("permute_dims", in_shapes=[x.shape], out_shape=out.shape, expected=shape, kw=dict(axes=axes))
+    ph.assert_result_shape("permute_dims", in_shapes=[x.shape], out_shape=tuple(out.shape), expected=shape, kw=dict(axes=axes))
 
     indices = list(sh.ndindex(x.shape))
     permuted_indices = [tuple(idx[axis] for axis in axes) for idx in indices]
@@ -308,7 +308,7 @@ def test_repeat(x, repeats):
     out = xp.repeat(x, repeats)
     ph.assert_dtype("repeat", in_dtype=x.dtype, out_dtype=out.dtype)
     expected_shape = (math.prod(x.shape) * repeats,)
-    ph.assert_shape("repeat", out_shape=out.shape, expected=expected_shape)
+    ph.assert_shape("repeat", out_shape=tuple(out.shape), expected=expected_shape)
     # TODO: values testing
 
 
@@ -331,7 +331,7 @@ def test_reshape(x, data):
         rsize = math.prod(shape) * -1
         _shape[shape.index(-1)] = size / rsize
     _shape = tuple(_shape)
-    ph.assert_result_shape("reshape", in_shapes=[x.shape], out_shape=out.shape, expected=_shape, kw=dict(shape=shape))
+    ph.assert_result_shape("reshape", in_shapes=[x.shape], out_shape=tuple(out.shape), expected=_shape, kw=dict(shape=shape))
 
     assert_array_ndindex("reshape", x, x_indices=sh.ndindex(x.shape), out=out, out_indices=sh.ndindex(out.shape))
 
@@ -370,7 +370,7 @@ def test_roll(x, data):
 
     ph.assert_dtype("roll", in_dtype=x.dtype, out_dtype=out.dtype)
 
-    ph.assert_result_shape("roll", in_shapes=[x.shape], out_shape=out.shape, kw=kw)
+    ph.assert_result_shape("roll", in_shapes=[x.shape], out_shape=list(out.shape), kw=kw)
 
     if kw.get("axis", None) is None:
         assert isinstance(shift, int)  # sanity check
@@ -412,7 +412,7 @@ def test_stack(shape, dtypes, kw, data):
     _shape.insert(_axis, len(arrays))
     _shape = tuple(_shape)
     ph.assert_result_shape(
-        "stack", in_shapes=tuple(x.shape for x in arrays), out_shape=out.shape, expected=_shape, kw=kw
+        "stack", in_shapes=tuple(x.shape for x in arrays), out_shape=tuple(out.shape), expected=_shape, kw=kw
     )
 
     out_indices = sh.ndindex(out.shape)

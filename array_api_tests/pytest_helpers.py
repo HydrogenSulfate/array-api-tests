@@ -272,7 +272,7 @@ def assert_shape(
     Assert the output shape is as expected, e.g.
 
         >>> out = xp.ones((3, 3, 3))
-        >>> assert_shape('ones', out_shape=out.shape, expected=(3, 3, 3))
+        >>> assert_shape('ones', out_shape=tuple(out.shape), expected=(3, 3, 3))
 
     """
     __tracebackhide__ = True
@@ -302,7 +302,7 @@ def assert_result_shape(
     in_shapes, to test against out_shape, e.g.
 
         >>> out = xp.add(xp.ones((3, 1)), xp.ones((1, 3)))
-        >>> assert_result_shape('add', in_shape=[(3, 1), (1, 3)], out_shape=out.shape)
+        >>> assert_result_shape('add', in_shape=[(3, 1), (1, 3)], out_shape=tuple(out.shape))
 
         is equivalent to
 
@@ -525,7 +525,7 @@ def assert_array_elements(
     """
     __tracebackhide__ = True
     dh.result_type(out.dtype, expected.dtype)  # sanity check
-    assert_shape(func_name, out_shape=out.shape, expected=expected.shape, kw=kw)  # sanity check
+    assert_shape(func_name, out_shape=list(out.shape), expected=list(expected.shape), kw=kw)  # sanity check
     f_func = f"[{func_name}({fmt_kw(kw)})]"
 
     # First we try short-circuit for a successful assertion by using vectorised checks.

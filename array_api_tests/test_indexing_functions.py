@@ -33,8 +33,8 @@ def test_take(x, data):
     ph.assert_dtype("take", in_dtype=x.dtype, out_dtype=out.dtype)
     ph.assert_shape(
         "take",
-        out_shape=out.shape,
-        expected=x.shape[:axis] + (len(_indices),) + x.shape[axis + 1 :],
+        out_shape=tuple(out.shape),
+        expected=x.shape[:axis] + list((len(_indices),)) + x.shape[axis + 1 :],
         kw=dict(
             x=x,
             indices=indices,
