@@ -642,7 +642,7 @@ def binary_param_assert_shape(
     else:
         in_shapes = [left.shape, right.shape]  # type: ignore
     ph.assert_result_shape(
-        ctx.func_name, in_shapes=in_shapes, out_shape=res.shape, expected=expected, repr_name=f"{ctx.res_name}.shape"
+        ctx.func_name, in_shapes=in_shapes, out_shape=tuple(res.shape), expected=expected, repr_name=f"{ctx.res_name}.shape"
     )
 
 
