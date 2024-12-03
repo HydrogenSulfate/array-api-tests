@@ -94,7 +94,7 @@ def test_broadcast_arrays(shapes, data):
 @given(x=hh.arrays(dtype=hh.all_dtypes, shape=hh.shapes()), data=st.data())
 def test_broadcast_to(x, data):
     shape = data.draw(
-        hh.mutually_broadcastable_shapes(1, base_shape=x.shape)
+        hh.mutually_broadcastable_shapes(1, base_shape=tuple(x.shape))
         .map(lambda S: S[0])
         .filter(lambda s: sh.broadcast_shapes(x.shape, s) == s),
         label="shape",
@@ -103,7 +103,7 @@ def test_broadcast_to(x, data):
     out = xp.broadcast_to(x, shape)
 
     ph.assert_dtype("broadcast_to", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("broadcast_to", out_shape=tuple(out.shape), expected=shape)
+    ph.assert_shape("broadcast_to", out_shape=out.shape, expected=list(shape))
     # TODO: test values
 
 

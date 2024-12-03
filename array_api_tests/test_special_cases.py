@@ -1336,7 +1336,7 @@ def test_empty_arrays(func_name, expected):  # TODO: parse docstrings to get exp
 def test_nan_propagation(func_name, x, data):
     func = getattr(xp, func_name)
     nan_positions = data.draw(
-        hh.arrays(dtype=hh.bool_dtype, shape=x.shape), label="nan_positions"
+        hh.arrays(dtype=hh.bool_dtype, shape=tuple(x.shape)), label="nan_positions"
     )
     assume(xp.any(nan_positions))
     x = xp.where(nan_positions, xp.asarray(float("nan")), x)

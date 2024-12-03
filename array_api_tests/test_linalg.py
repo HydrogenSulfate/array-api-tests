@@ -837,7 +837,7 @@ def _test_tensordot(namespace, x1, x2, kw):
     _shape2 = tuple([i for i in _shape2 if i is not None])
     result_shape = _shape1 + _shape2
     ph.assert_result_shape('tensordot', [x1.shape, x2.shape], res.shape,
-                           expected=result_shape)
+                           expected=list(result_shape))
     _test_tensordot_stacks(x1, x2, kw, res)
 
 @pytest.mark.unvectorized

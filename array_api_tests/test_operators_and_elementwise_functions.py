@@ -704,7 +704,7 @@ def test_abs(ctx, data):
         assert out.dtype == dh.dtype_components[x.dtype]
     else:
         ph.assert_dtype(ctx.func_name, in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape(ctx.func_name, out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape(ctx.func_name, out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl(
         ctx.func_name,
         x,
@@ -722,7 +722,7 @@ def test_abs(ctx, data):
 def test_acos(x):
     out = xp.acos(x)
     ph.assert_dtype("acos", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("acos", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("acos", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl(
         "acos", x, out, math.acos, filter_=lambda s: default_filter(s) and -1 <= s <= 1
     )
@@ -732,7 +732,7 @@ def test_acos(x):
 def test_acosh(x):
     out = xp.acosh(x)
     ph.assert_dtype("acosh", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("acosh", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("acosh", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl(
         "acosh", x, out, math.acosh, filter_=lambda s: default_filter(s) and s >= 1
     )
@@ -756,7 +756,7 @@ def test_add(ctx, data):
 def test_asin(x):
     out = xp.asin(x)
     ph.assert_dtype("asin", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("asin", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("asin", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl(
         "asin", x, out, math.asin, filter_=lambda s: default_filter(s) and -1 <= s <= 1
     )
@@ -766,7 +766,7 @@ def test_asin(x):
 def test_asinh(x):
     out = xp.asinh(x)
     ph.assert_dtype("asinh", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("asinh", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("asinh", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("asinh", x, out, math.asinh)
 
 
@@ -774,7 +774,7 @@ def test_asinh(x):
 def test_atan(x):
     out = xp.atan(x)
     ph.assert_dtype("atan", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("atan", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("atan", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("atan", x, out, math.atan)
 
 
@@ -790,7 +790,7 @@ def test_atan2(x1, x2):
 def test_atanh(x):
     out = xp.atanh(x)
     ph.assert_dtype("atanh", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("atanh", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("atanh", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl(
         "atanh",
         x,
@@ -851,7 +851,7 @@ def test_bitwise_invert(ctx, data):
     out = ctx.func(x)
 
     ph.assert_dtype(ctx.func_name, in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape(ctx.func_name, out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape(ctx.func_name, out_shape=out.shape, expected=x.shape)
     if x.dtype == xp.bool:
         refimpl = operator.not_
     else:
@@ -922,7 +922,7 @@ def test_bitwise_xor(ctx, data):
 def test_ceil(x):
     out = xp.ceil(x)
     ph.assert_dtype("ceil", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("ceil", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("ceil", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("ceil", x, out, math.ceil, strict_check=True)
 
 
@@ -932,7 +932,7 @@ def test_clip(x, data):
     # Ensure that if both min and max are arrays that all three of x, min, max
     # are broadcast compatible.
     shape1, shape2 = data.draw(hh.mutually_broadcastable_shapes(2,
-                                                                base_shape=x.shape),
+                                                                base_shape=tuple(x.shape)),
                                 label="min.shape, max.shape")
 
     dtypes = hh.real_floating_dtypes if dh.is_float_dtype(x.dtype) else hh.int_dtypes
@@ -968,7 +968,7 @@ def test_clip(x, data):
     if max is not None and not dh.is_scalar(max):
         shapes.append(max.shape)
     expected_shape = sh.broadcast_shapes(*shapes)
-    ph.assert_shape("clip", out_shape=tuple(out.shape), expected=expected_shape)
+    ph.assert_shape("clip", out_shape=out.shape, expected=expected_shape)
 
     # This is based on right_scalar_assert_against_refimpl and
     # binary_assert_against_refimpl. clip() is currently the only ternary
@@ -1056,7 +1056,7 @@ if api_version >= "2022.12":
     def test_conj(x):
         out = xp.conj(x)
         ph.assert_dtype("conj", in_dtype=x.dtype, out_dtype=out.dtype)
-        ph.assert_shape("conj", out_shape=tuple(out.shape), expected=x.shape)
+        ph.assert_shape("conj", out_shape=out.shape, expected=x.shape)
         unary_assert_against_refimpl("conj", x, out, operator.methodcaller("conjugate"))
 
 
@@ -1073,7 +1073,7 @@ def test_copysign(x1, x2):
 def test_cos(x):
     out = xp.cos(x)
     ph.assert_dtype("cos", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("cos", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("cos", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("cos", x, out, math.cos)
 
 
@@ -1081,7 +1081,7 @@ def test_cos(x):
 def test_cosh(x):
     out = xp.cosh(x)
     ph.assert_dtype("cosh", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("cosh", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("cosh", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("cosh", x, out, math.cosh)
 
 
@@ -1142,7 +1142,7 @@ def test_equal(ctx, data):
 def test_exp(x):
     out = xp.exp(x)
     ph.assert_dtype("exp", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("exp", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("exp", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("exp", x, out, math.exp)
 
 
@@ -1150,7 +1150,7 @@ def test_exp(x):
 def test_expm1(x):
     out = xp.expm1(x)
     ph.assert_dtype("expm1", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("expm1", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("expm1", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("expm1", x, out, math.expm1)
 
 
@@ -1158,7 +1158,7 @@ def test_expm1(x):
 def test_floor(x):
     out = xp.floor(x)
     ph.assert_dtype("floor", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("floor", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("floor", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("floor", x, out, math.floor, strict_check=True)
 
 
@@ -1236,7 +1236,7 @@ if api_version >= "2022.12":
     def test_imag(x):
         out = xp.imag(x)
         ph.assert_dtype("imag", in_dtype=x.dtype, out_dtype=out.dtype, expected=dh.dtype_components[x.dtype])
-        ph.assert_shape("imag", out_shape=tuple(out.shape), expected=x.shape)
+        ph.assert_shape("imag", out_shape=out.shape, expected=x.shape)
         unary_assert_against_refimpl("imag", x, out, operator.attrgetter("imag"))
 
 
@@ -1244,7 +1244,7 @@ if api_version >= "2022.12":
 def test_isfinite(x):
     out = xp.isfinite(x)
     ph.assert_dtype("isfinite", in_dtype=x.dtype, out_dtype=out.dtype, expected=xp.bool)
-    ph.assert_shape("isfinite", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("isfinite", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("isfinite", x, out, math.isfinite, res_stype=bool)
 
 
@@ -1252,7 +1252,7 @@ def test_isfinite(x):
 def test_isinf(x):
     out = xp.isinf(x)
     ph.assert_dtype("isfinite", in_dtype=x.dtype, out_dtype=out.dtype, expected=xp.bool)
-    ph.assert_shape("isinf", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("isinf", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("isinf", x, out, math.isinf, res_stype=bool)
 
 
@@ -1260,7 +1260,7 @@ def test_isinf(x):
 def test_isnan(x):
     out = xp.isnan(x)
     ph.assert_dtype("isnan", in_dtype=x.dtype, out_dtype=out.dtype, expected=xp.bool)
-    ph.assert_shape("isnan", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("isnan", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("isnan", x, out, math.isnan, res_stype=bool)
 
 
@@ -1308,7 +1308,7 @@ def test_less_equal(ctx, data):
 def test_log(x):
     out = xp.log(x)
     ph.assert_dtype("log", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("log", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("log", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl(
         "log", x, out, math.log, filter_=lambda s: default_filter(s) and s >= 1
     )
@@ -1318,7 +1318,7 @@ def test_log(x):
 def test_log1p(x):
     out = xp.log1p(x)
     ph.assert_dtype("log1p", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("log1p", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("log1p", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl(
         "log1p", x, out, math.log1p, filter_=lambda s: default_filter(s) and s >= 1
     )
@@ -1328,7 +1328,7 @@ def test_log1p(x):
 def test_log2(x):
     out = xp.log2(x)
     ph.assert_dtype("log2", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("log2", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("log2", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl(
         "log2", x, out, math.log2, filter_=lambda s: default_filter(s) and s > 1
     )
@@ -1338,7 +1338,7 @@ def test_log2(x):
 def test_log10(x):
     out = xp.log10(x)
     ph.assert_dtype("log10", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("log10", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("log10", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl(
         "log10", x, out, math.log10, filter_=lambda s: default_filter(s) and s > 0
     )
@@ -1370,7 +1370,7 @@ def test_logical_and(x1, x2):
 def test_logical_not(x):
     out = xp.logical_not(x)
     ph.assert_dtype("logical_not", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("logical_not", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("logical_not", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl(
         "logical_not", x, out, operator.not_, expr_template="(not {})={}"
     )
@@ -1439,7 +1439,7 @@ def test_negative(ctx, data):
     out = ctx.func(x)
 
     ph.assert_dtype(ctx.func_name, in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape(ctx.func_name, out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape(ctx.func_name, out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl(
         ctx.func_name, x, out, operator.neg, expr_template="-({})={}"  # type: ignore
     )
@@ -1473,7 +1473,7 @@ def test_positive(ctx, data):
     out = ctx.func(x)
 
     ph.assert_dtype(ctx.func_name, in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape(ctx.func_name, out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape(ctx.func_name, out_shape=out.shape, expected=x.shape)
     ph.assert_array_elements(ctx.func_name, out=out, expected=x)
 
 
@@ -1503,7 +1503,7 @@ if api_version >= "2022.12":
     def test_real(x):
         out = xp.real(x)
         ph.assert_dtype("real", in_dtype=x.dtype, out_dtype=out.dtype, expected=dh.dtype_components[x.dtype])
-        ph.assert_shape("real", out_shape=tuple(out.shape), expected=x.shape)
+        ph.assert_shape("real", out_shape=out.shape, expected=x.shape)
         unary_assert_against_refimpl("real", x, out, operator.attrgetter("real"))
 
 
@@ -1529,7 +1529,7 @@ def test_remainder(ctx, data):
 def test_round(x):
     out = xp.round(x)
     ph.assert_dtype("round", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("round", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("round", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("round", x, out, round, strict_check=True)
 
 
@@ -1538,7 +1538,7 @@ def test_round(x):
 def test_signbit(x):
     out = xp.signbit(x)
     ph.assert_dtype("signbit", in_dtype=x.dtype, out_dtype=out.dtype, expected=xp.bool)
-    ph.assert_shape("signbit", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("signbit", out_shape=out.shape, expected=x.shape)
     refimpl = lambda x: math.copysign(1.0, x) < 0
     unary_assert_against_refimpl("round", x, out, refimpl, strict_check=True)
 
@@ -1547,7 +1547,7 @@ def test_signbit(x):
 def test_sign(x):
     out = xp.sign(x)
     ph.assert_dtype("sign", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("sign", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("sign", out_shape=out.shape, expected=x.shape)
     refimpl = lambda x: x / math.abs(x) if x != 0 else 0
     unary_assert_against_refimpl(
         "sign",
@@ -1563,7 +1563,7 @@ def test_sign(x):
 def test_sin(x):
     out = xp.sin(x)
     ph.assert_dtype("sin", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("sin", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("sin", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("sin", x, out, math.sin)
 
 
@@ -1571,7 +1571,7 @@ def test_sin(x):
 def test_sinh(x):
     out = xp.sinh(x)
     ph.assert_dtype("sinh", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("sinh", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("sinh", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("sinh", x, out, math.sinh)
 
 
@@ -1579,7 +1579,7 @@ def test_sinh(x):
 def test_square(x):
     out = xp.square(x)
     ph.assert_dtype("square", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("square", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("square", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl(
         "square", x, out, lambda s: s*s, expr_template="{}²={}"
     )
@@ -1589,7 +1589,7 @@ def test_square(x):
 def test_sqrt(x):
     out = xp.sqrt(x)
     ph.assert_dtype("sqrt", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("sqrt", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("sqrt", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl(
         "sqrt", x, out, math.sqrt, filter_=lambda s: default_filter(s) and s >= 0
     )
@@ -1613,7 +1613,7 @@ def test_subtract(ctx, data):
 def test_tan(x):
     out = xp.tan(x)
     ph.assert_dtype("tan", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("tan", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("tan", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("tan", x, out, math.tan)
 
 
@@ -1621,7 +1621,7 @@ def test_tan(x):
 def test_tanh(x):
     out = xp.tanh(x)
     ph.assert_dtype("tanh", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("tanh", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("tanh", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("tanh", x, out, math.tanh)
 
 
@@ -1629,5 +1629,5 @@ def test_tanh(x):
 def test_trunc(x):
     out = xp.trunc(x)
     ph.assert_dtype("trunc", in_dtype=x.dtype, out_dtype=out.dtype)
-    ph.assert_shape("trunc", out_shape=tuple(out.shape), expected=x.shape)
+    ph.assert_shape("trunc", out_shape=out.shape, expected=x.shape)
     unary_assert_against_refimpl("trunc", x, out, math.trunc, strict_check=True)
