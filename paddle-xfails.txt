@@ -105,3 +105,4 @@ array_api_tests/test_operators_and_elementwise_functions.py::test_floor
 array_api_tests/test_operators_and_elementwise_functions.py::test_ceil
 array_api_tests/test_operators_and_elementwise_functions.py::test_greater_equal[__ge__(x1, x2)]
 array_api_tests/test_operators_and_elementwise_functions.py::test_greater_equal[greater_equal(x1, x2)]
+array_api_tests/test_searching_functions.py::test_where
