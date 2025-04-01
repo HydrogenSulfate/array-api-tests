@@ -74,6 +74,18 @@ def test_broadcast_arrays(shapes, data):
     out = xp.broadcast_arrays(*arrays)
 
     expected_shape = sh.broadcast_shapes(*shapes)
+
+    expected_shape = list(expected_shape)
+
+    print("==========")
+    print(f"Test case shapes: {list(shapes)}")
+    print(f"Test case types: {[x.dtype for x in arrays]}")
+    print(f"Result shape: {[x.shape for x in out]}")
+    print(f"Result types: {[x.dtype for x in out]}")
+    print(f"Expected shape: {expected_shape}")
+    print(f"Expected types: {[x.dtype for x in arrays]}")
+    print("==========")
+
     for i, x in enumerate(arrays):
         ph.assert_dtype(
             "broadcast_arrays",
