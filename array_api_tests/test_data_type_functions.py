@@ -74,6 +74,9 @@ def test_broadcast_arrays(shapes, data):
     out = xp.broadcast_arrays(*arrays)
 
     expected_shape = sh.broadcast_shapes(*shapes)
+
+    expected_shape = list(expected_shape)
+
     for i, x in enumerate(arrays):
         ph.assert_dtype(
             "broadcast_arrays",
